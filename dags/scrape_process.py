@@ -13,13 +13,15 @@ crawl_process_dag = DAG(
     dagrun_timeout=datetime.timedelta(seconds=5)
 )
 scrape = BashOperator(
-    task_id='scrape',
-    bash_command='echo "Scraping now" '
+    task_id="scrape",
+    bash_command='echo "Scraping now" ',
+    dag=crawl_process_dag
 )
 
 process = BashOperator(
-    task_id='process',
-    bash_command='echo "Processing now"'
+    task_id="process",
+    bash_command='echo "Processing now"',
+    dag=crawl_process_dag
 )
 
 scrape >> process
