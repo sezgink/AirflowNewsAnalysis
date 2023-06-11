@@ -21,6 +21,7 @@ RUN pip freeze > /home/airflow/installed.txt
 RUN pip install --no-cache-dir "apache-airflow==${AIRFLOW_VERSION}"
 # RUN pip install --no-cache-dir "apache-airflow==${AIRFLOW_VERSION}" -r /requirements.txt
 
-RUN COMMIT=$(curl -s https://api.github.com/repos/sezgink/TwitterScraper/git/ref/heads/main  | jq -r ".object.sha")
+# RUN COMMIT=$(curl -s https://api.github.com/repos/sezgink/TwitterScraper/git/ref/heads/main  | jq -r ".object.sha")
+RUN date > /tmp/now
 RUN git clone https://github.com/sezgink/TwitterScraper.git
 USER airflow
