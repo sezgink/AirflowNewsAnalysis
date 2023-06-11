@@ -25,16 +25,16 @@ crawl_process_dag = DAG(
     # start_date=datetime.datetime(2021, 1, 1),
     # schedule="@daily",
     # start_date=datetime.datetime.now()-datetime.timedelta(days=1),
-    schedule="*/2 * * * *",
-    dagrun_timeout=datetime.timedelta(minutes=2)
+    schedule="*/5 * * * *",
+    dagrun_timeout=datetime.timedelta(minutes=5)
 )
 scrape = BashOperator(
     task_id="scrape",
     # bash_command='echo "Scraping now" ',
     # bash_command='pwd',
-    execution_timeout=datetime.timedelta(minutes=2),
-    # bash_command='python /opt/airflow/TwitterScraper/src/twitterdatacollector.py single elonmusk /opt/airflow/data/fetchedTweets.csv',
-    bash_command='python /opt/airflow/TwitterScraper/src/twitterdatacollector.py single elonmusk /opt/airflow/data/fetchedTweets{{ts}}.csv',
+    execution_timeout=datetime.timedelta(minutes=4),
+    # bash_command='python /opt/airflow/TwitterScraper/src/twitterdatacollector.py single elonmusk /opt/airflow/data/fetchedTweets{{ts}}.csv',
+    bash_command='python /opt/airflow/TwitterScraper/src/twitterdatacollector.py multiple /opt/airflow/data_input/twitter_accounts.txt /opt/airflow/data/fetchedTweets{{ts}}.csv',
     dag=crawl_process_dag
 )
 
@@ -90,7 +90,8 @@ get_new_scrapes = BashOperator(
     echo "File 2: $file2"
     awk -F ',' 'NR==FNR{a[$2]; next} !($2 in a)' <(cut -d ',' -f 2 $file1| sort -u) <(cut -d ',' -f 2 $file2 | sort -u) > $output_file
     (head -n 1 $file1 && cat $output_file) > $output_dir/temp.csv && mv $output_dir/temp.csv $output_file
-
+    #Remove old data
+    rm $file2
     """,
     dag=crawl_process_dag
 )
